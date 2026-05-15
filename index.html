@@ -8,107 +8,116 @@
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Outfit:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
   <style>
+:root {
+  /* MODO NORMAL (ROJO NEÓN) */
+  --neon-color: #ff1e1e;
+  --neon-glow-strong: rgba(255, 30, 30, 0.6);
+  --neon-glow-medium: rgba(255, 30, 30, 0.3);
+  --neon-smoke-1: rgba(255, 30, 30, 0.18);
+  --neon-smoke-2: rgba(255, 30, 30, 0.12);
+  --neon-glow-pulse: rgba(255, 30, 30, 0.15);
+  
+  /* TINTA INVISIBLE (Oculta) */
+  --uv-ink-color: transparent;
+  --uv-ink-shadow: none;
+}
+
+body.uv-mode {
+  /* MODO LUZ ULTRAVIOLETA (PÚRPURA / BLACKLIGHT) */
+  --neon-color: #9d4edd; /* Púrpura UV */
+  --neon-glow-strong: rgba(157, 78, 221, 0.8);
+  --neon-glow-medium: rgba(157, 78, 221, 0.4);
+  --neon-smoke-1: rgba(157, 78, 221, 0.35);
+  --neon-smoke-2: rgba(157, 78, 221, 0.25);
+  --neon-glow-pulse: rgba(157, 78, 221, 0.30);
+  
+  /* TINTA INVISIBLE (Revelada en Verde Neón) */
+  --uv-ink-color: #39ff14;
+  --uv-ink-shadow: 0 0 15px rgba(57, 255, 20, 0.6), 0 0 30px rgba(57, 255, 20, 0.3);
+}
+
 html, body { margin: 0; padding: 0; }
 * { box-sizing: border-box; }
 
+/* Transiciones suaves para todos los colores dinámicos */
+.transition-uv { transition: background 0.6s ease, color 0.6s ease, border-color 0.6s ease, text-shadow 0.6s ease, stroke 0.6s ease, fill 0.6s ease; }
+
 /* --- PANTALLA DE CARGA (PRELOADER) --- */
-#preloader {
-  position: fixed;
-  inset: 0;
-  background-color: #0a0a0a;
-  z-index: 999999; /* Por encima de todo */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
-}
+#preloader { position: fixed; inset: 0; background-color: #0a0a0a; z-index: 999999; display: flex; align-items: center; justify-content: center; transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out; }
+#preloader.hidden-preloader { opacity: 0; visibility: hidden; }
 
-#preloader.hidden-preloader {
-  opacity: 0;
-  visibility: hidden;
-}
-
-.flicker-text {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(4rem, 15vw, 8rem);
-  color: #ff1e1e;
-  letter-spacing: 0.1em;
-  animation: neon-flicker 2s infinite alternate;
-}
+.flicker-text { font-family: 'Bebas Neue', sans-serif; font-size: clamp(4rem, 15vw, 8rem); color: var(--neon-color); letter-spacing: 0.1em; animation: neon-flicker 2s infinite alternate; }
 
 @keyframes neon-flicker {
-  0%, 18%, 22%, 25%, 53%, 57%, 100% {
-    opacity: 1;
-    text-shadow: 0 0 10px rgba(255,30,30,0.8), 0 0 30px rgba(255,30,30,0.6), 0 0 60px rgba(255,30,30,0.4);
-  }
-  20%, 24%, 55% {
-    opacity: 0.3;
-    text-shadow: none;
-  }
+  0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; text-shadow: 0 0 10px var(--neon-glow-strong), 0 0 30px var(--neon-glow-medium); }
+  20%, 24%, 55% { opacity: 0.3; text-shadow: none; }
 }
 
-/* --- TEXTURA DE RUIDO (FILM GRAIN) --- */
-.noise-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.05; 
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-}
+/* --- TEXTURA DE RUIDO Y TINTA INVISIBLE GLOBAL --- */
+.noise-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; opacity: 0.05; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
 
-/* --- ANIMACIÓN MARQUEE (CINTA) --- */
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-.animate-marquee {
-  display: flex;
-  width: max-content;
-  animation: marquee 20s linear infinite;
-}
+.uv-global-watermark { color: var(--uv-ink-color); text-shadow: var(--uv-ink-shadow); opacity: 0.03; transition: all 0.8s ease; }
+body.uv-mode .uv-global-watermark { opacity: 0.12; }
 
-@keyframes float { 0%,100%{transform:translateY(0) rotateY(0deg)} 50%{transform:translateY(-18px) rotateY(8deg)} }
+/* --- ANIMACIONES GENERALES --- */
+@keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.animate-marquee { display: flex; width: max-content; animation: marquee 20s linear infinite; }
+
 @keyframes pulseGlow { 0%,100%{opacity:.4} 50%{opacity:.8} }
 @keyframes smokeMove { 0%{transform:translateX(-30%) scale(1);opacity:.15} 50%{transform:translateX(10%) scale(1.3);opacity:.08} 100%{transform:translateX(-30%) scale(1);opacity:.15} }
 @keyframes fadeUp { from{opacity:0;transform:translateY(40px)} to{opacity:1;transform:translateY(0)} }
-@keyframes textGlow { 0%,100%{text-shadow:0 0 20px rgba(255,30,30,.6),0 0 60px rgba(255,30,30,.3),0 4px 8px rgba(0,0,0,.8)} 50%{text-shadow:0 0 40px rgba(255,30,30,.9),0 0 80px rgba(255,30,30,.5),0 4px 8px rgba(0,0,0,.8)} }
+@keyframes textGlow { 0%,100%{text-shadow:0 0 20px var(--neon-glow-strong),0 0 60px var(--neon-glow-medium),0 4px 8px rgba(0,0,0,.8)} 50%{text-shadow:0 0 40px var(--neon-glow-strong),0 0 80px var(--neon-glow-medium),0 4px 8px rgba(0,0,0,.8)} }
 
-.smoke-layer { animation: smokeMove 12s ease-in-out infinite; }
-.smoke-layer-2 { animation: smokeMove 16s ease-in-out infinite reverse; }
-.glow-pulse { animation: pulseGlow 3s ease-in-out infinite; }
-.text-glow { animation: textGlow 3s ease-in-out infinite; }
+.smoke-layer { animation: smokeMove 12s ease-in-out infinite; background: radial-gradient(ellipse 80% 60% at 30% 40%, var(--neon-smoke-1), transparent); transition: background 0.8s ease; }
+.smoke-layer-2 { animation: smokeMove 16s ease-in-out infinite reverse; background: radial-gradient(ellipse 70% 50% at 70% 60%, var(--neon-smoke-2), transparent); transition: background 0.8s ease; }
+.glow-pulse { animation: pulseGlow 3s ease-in-out infinite; background: radial-gradient(circle, var(--neon-glow-pulse), transparent 70%); transition: background 0.8s ease; }
+.text-glow { animation: textGlow 3s ease-in-out infinite; -webkit-text-stroke: 1px var(--neon-glow-medium); transition: -webkit-text-stroke 0.8s ease; }
 
 .fade-up { opacity: 0; transform: translateY(40px); transition: all .7s cubic-bezier(.22,1,.36,1); }
 .fade-up.visible { opacity: 1; transform: translateY(0); }
 
+/* --- EFECTO GLITCH --- */
+@keyframes cyberGlitch {
+  0% { opacity: 0; transform: translateY(40px) skewX(0deg); filter: grayscale(100%) contrast(200%); }
+  15% { opacity: 0.8; transform: translateY(10px) skewX(-20deg) translateX(-10px); filter: invert(20%); box-shadow: -10px 0 0 rgba(255,0,0,0.5), 10px 0 0 rgba(0,255,255,0.5); }
+  30% { opacity: 1; transform: translateY(-5px) skewX(15deg) translateX(10px); filter: hue-rotate(45deg); box-shadow: 10px 0 0 rgba(255,0,0,0.5), -10px 0 0 rgba(0,255,255,0.5); }
+  45% { transform: translateY(5px) skewX(-5deg) translateX(-5px); box-shadow: -5px 0 0 rgba(255,0,0,0.5), 5px 0 0 rgba(0,255,255,0.5); }
+  60% { transform: translateY(0) skewX(2deg) translateX(2px); filter: none; box-shadow: none; }
+  75% { transform: translateY(0) skewX(-1deg) translateX(-1px); }
+  100% { opacity: 1; transform: translateY(0) skewX(0deg) translateX(0); }
+}
+.glitch-reveal { opacity: 0; }
+.glitch-reveal.visible { animation: cyberGlitch 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both; }
+
+/* --- COMPONENTES --- */
 .card-hover { transition: all .4s cubic-bezier(.22,1,.36,1); }
-.card-hover:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 0 30px rgba(255,30,30,.25), 0 20px 40px rgba(0,0,0,.5); }
+.card-hover:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 0 30px var(--neon-glow-medium), 0 20px 40px rgba(0,0,0,.5); }
 .card-hover:hover .card-glow { opacity: 1; }
 
 .btn-neon { position: relative; overflow: hidden; transition: all .3s; }
-.btn-neon::before { content:''; position:absolute; inset:0; background:linear-gradient(90deg,transparent,rgba(255,30,30,.3),transparent); transform:translateX(-100%); transition:transform .5s; }
+.btn-neon::before { content:''; position:absolute; inset:0; background:linear-gradient(90deg,transparent,var(--neon-glow-medium),transparent); transform:translateX(-100%); transition:transform .5s; }
 .btn-neon:hover::before { transform:translateX(100%); }
-.btn-neon:hover { box-shadow: 0 0 25px rgba(255,30,30,.5), 0 0 50px rgba(255,30,30,.2); }
+.btn-neon:hover { box-shadow: 0 0 25px var(--neon-glow-strong), 0 0 50px var(--neon-glow-medium); }
 
 .nav-link { position:relative; }
-.nav-link::after { content:''; position:absolute; bottom:-2px; left:0; width:0; height:2px; background:#ff1e1e; transition:width .3s; }
+.nav-link::after { content:''; position:absolute; bottom:-2px; left:0; width:0; height:2px; background:var(--neon-color); transition:width .3s, background 0.6s ease; }
 .nav-link:hover::after { width:100%; }
+
+/* Clases especiales de Tinta Secreta */
+.secret-ink { color: var(--uv-ink-color); text-shadow: var(--uv-ink-shadow); transform: scale(0.8) rotate(-15deg); opacity: 0; transition: all 0.6s cubic-bezier(.22,1,.36,1); }
+body.uv-mode .secret-ink { opacity: 0.15; transform: scale(1) rotate(-15deg); }
 
 /* Scrollbar personalizada */
 ::-webkit-scrollbar { width:6px; }
 ::-webkit-scrollbar-track { background:#0a0a0a; }
-::-webkit-scrollbar-thumb { background:#ff1e1e40; border-radius:3px; }
+::-webkit-scrollbar-thumb { background:var(--neon-glow-medium); border-radius:3px; transition: background 0.6s; }
 </style>
   <script>
 tailwind.config = {
   theme: {
     extend: {
       colors: {
-        neon: '#ff1e1e',
+        neon: 'var(--neon-color)',
         dark: { 900:'#0a0a0a', 800:'#111111', 700:'#1a1a1a', 600:'#222222' }
       },
       fontFamily: {
@@ -120,36 +129,50 @@ tailwind.config = {
 }
 </script>
  </head>
- <!-- Añadido un overflow-hidden temporal para que no puedan scrollear durante la pantalla de carga -->
- <body class="bg-dark-900 text-white font-body overflow-hidden" id="body-container">
+ <body class="bg-dark-900 text-white font-body overflow-hidden transition-colors duration-700" id="body-container">
   
   <!-- PANTALLA DE CARGA -->
   <div id="preloader">
-    <div class="flicker-text">EXTSSY CAPS</div>
+    <div class="flicker-text transition-uv">EXTSSY CAPS</div>
   </div>
 
   <div class="noise-bg"></div>
 
-  <div id="app" class="w-full overflow-hidden">
+  <div id="app" class="w-full overflow-hidden relative">
    
+   <!-- MARCA DE AGUA GIGANTE GLOBAL (Solo visible en UV Mode) -->
+   <div class="fixed inset-0 flex items-center justify-center pointer-events-none z-0 overflow-hidden">
+     <p class="uv-global-watermark font-display uppercase tracking-[0.2em] leading-none transform -rotate-12 whitespace-nowrap" style="font-size: 15vw;">
+       STREETWEAR CULT • NO RULES • STREETWEAR CULT
+     </p>
+   </div>
+
+   <!-- BOTÓN FLOTANTE MODO UV -->
+   <button id="uv-toggle-btn" class="fixed bottom-24 right-6 z-[60] w-14 h-14 bg-dark-800 border-2 border-white/20 rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 shadow-lg group" aria-label="Modo Luz UV">
+     <i data-lucide="flashlight" class="w-6 h-6 text-white/50 group-hover:text-white transition-colors" id="uv-icon"></i>
+     <!-- Tooltip -->
+     <span class="absolute right-16 bg-dark-800 border border-white/10 text-[10px] tracking-widest uppercase px-3 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">UV Mode</span>
+   </button>
+
+   <!-- BOTÓN FLOTANTE WHATSAPP -->
    <a href="https://wa.me/529631389664?text=Hola!%20Vi%20su%20cat%C3%A1logo%20web%20y%20me%20gustar%C3%ADa%20consultar%20la%20disponibilidad%20de%20algunos%20modelos." 
       target="_blank" 
-      class="fixed bottom-6 right-6 z-[60] w-14 h-14 bg-dark-800 border border-neon rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 shadow-[0_0_15px_rgba(255,30,30,0.4)] hover:shadow-[0_0_25px_rgba(255,30,30,0.6)] group"
+      class="fixed bottom-6 right-6 z-[60] w-14 h-14 bg-dark-800 border border-neon rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-500 shadow-[0_0_15px_var(--neon-glow-medium)] hover:shadow-[0_0_25px_var(--neon-glow-strong)] group transition-uv"
       aria-label="Contactar por WhatsApp">
-      <svg class="w-7 h-7 text-neon group-hover:text-white transition-colors" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <svg class="w-7 h-7 text-neon group-hover:text-white transition-uv" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.82 9.82 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.052 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
       </svg>
    </a>
 
    <nav id="navbar" class="fixed top-0 left-0 w-full z-50 transition-all duration-500" style="background:rgba(10,10,10,.85);backdrop-filter:blur(12px)">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16 lg:h-20">
-     <a href="#" class="font-display text-2xl lg:text-3xl tracking-wider text-neon" id="nav-logo">EXTSSY CAPS</a>
+     <a href="#" class="font-display text-2xl lg:text-3xl tracking-wider text-neon transition-uv" id="nav-logo">EXTSSY CAPS</a>
      <div class="hidden md:flex items-center gap-8 text-sm lg:text-base font-medium tracking-wide">
       <a href="#hero" class="nav-link text-white/80 hover:text-white">Inicio</a> 
       <a href="#collections" class="nav-link text-white/80 hover:text-white">Catálogo</a> 
+      <a href="#reviews" class="nav-link text-white/80 hover:text-white">Reseñas</a> 
       <a href="#about" class="nav-link text-white/80 hover:text-white">Nosotros</a> 
       <a href="#location" class="nav-link text-white/80 hover:text-white">Tienda</a>
-      <a href="#footer" class="nav-link text-white/80 hover:text-white">Contacto</a>
      </div>
      <button id="mobile-toggle" class="md:hidden text-white/80 p-2 -mr-2" aria-label="Menu"> 
       <i data-lucide="menu" style="width:28px;height:28px"></i> 
@@ -157,35 +180,39 @@ tailwind.config = {
     </div>
     
     <div id="mobile-menu" class="hidden md:hidden absolute top-16 left-0 w-full bg-dark-900/95 border-b border-white/10 backdrop-blur-xl shadow-2xl flex flex-col px-6 py-6 space-y-4 text-center z-40">
-     <a href="#hero" class="block text-white/80 hover:text-neon text-lg py-2 border-b border-white/5">Inicio</a> 
-     <a href="#collections" class="block text-white/80 hover:text-neon text-lg py-2 border-b border-white/5">Catálogo</a> 
-     <a href="#about" class="block text-white/80 hover:text-neon text-lg py-2 border-b border-white/5">Nosotros</a> 
-     <a href="#location" class="block text-white/80 hover:text-neon text-lg py-2 border-b border-white/5">Tienda</a>
-     <a href="#footer" class="block text-white/80 hover:text-neon text-lg py-2">Contacto</a>
+     <a href="#hero" class="block text-white/80 hover:text-neon text-lg py-2 border-b border-white/5 transition-uv">Inicio</a> 
+     <a href="#collections" class="block text-white/80 hover:text-neon text-lg py-2 border-b border-white/5 transition-uv">Catálogo</a> 
+     <a href="#reviews" class="block text-white/80 hover:text-neon text-lg py-2 border-b border-white/5 transition-uv">Reseñas</a> 
+     <a href="#about" class="block text-white/80 hover:text-neon text-lg py-2 border-b border-white/5 transition-uv">Nosotros</a> 
+     <a href="#location" class="block text-white/80 hover:text-neon text-lg py-2 border-b border-white/5 transition-uv">Tienda</a>
     </div>
    </nav>
 
    <section id="hero" class="relative w-full overflow-hidden min-h-[100dvh] flex flex-col justify-center">
+    
     <div class="absolute inset-0">
-     <div class="absolute inset-0 bg-gradient-to-b from-dark-900 via-dark-900 to-dark-800"></div>
-     <div class="smoke-layer absolute top-0 left-0 w-full h-full opacity-15" style="background:radial-gradient(ellipse 80% 60% at 30% 40%,rgba(255,30,30,.18),transparent)"></div>
-     <div class="smoke-layer-2 absolute top-0 left-0 w-full h-full opacity-10" style="background:radial-gradient(ellipse 70% 50% at 70% 60%,rgba(255,30,30,.12),transparent)"></div>
-     <div class="glow-pulse absolute top-1/4 left-1/2 -translate-x-1/2 w-72 h-72 sm:w-96 sm:h-96 rounded-full" style="background:radial-gradient(circle,rgba(255,30,30,.15),transparent 70%)"></div>
+     <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover opacity-40 pointer-events-none" id="hero-vid">
+        <source src="https://cdn.coverr.co/videos/coverr-walking-through-a-neon-lit-alley-4348/1080p.mp4" type="video/mp4">
+     </video>
+     <div class="absolute inset-0 bg-gradient-to-b from-dark-900/80 via-dark-900/60 to-dark-800/90 transition-colors duration-700"></div>
+     <div class="smoke-layer absolute top-0 left-0 w-full h-full opacity-15"></div>
+     <div class="smoke-layer-2 absolute top-0 left-0 w-full h-full opacity-10"></div>
+     <div class="glow-pulse absolute top-1/4 left-1/2 -translate-x-1/2 w-72 h-72 sm:w-96 sm:h-96 rounded-full"></div>
     </div>
 
     <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 flex flex-col items-center text-center mt-12 sm:mt-0">
-     <h1 id="hero-title" class="font-display text-glow leading-none tracking-wider mb-2" style="font-size:clamp(3.5rem,15vw,10rem);color:#fff;text-shadow:0 0 30px rgba(255,30,30,.6),0 0 60px rgba(255,30,30,.3),0 4px 8px rgba(0,0,0,.9);-webkit-text-stroke:1px rgba(255,30,30,.3)">EXTSSY CAPS</h1>
+     <h1 id="hero-title" class="font-display text-glow leading-none tracking-wider mb-2 transition-uv" style="font-size:clamp(3.5rem,15vw,10rem);color:#fff;">EXTSSY CAPS</h1>
      <p id="hero-subtitle" class="mt-2 text-white/50 text-base sm:text-xl font-light tracking-widest uppercase px-4">Luce bien · Luce Extssy</p>
      <p class="mt-2 text-white/30 text-xs sm:text-sm font-light tracking-wider uppercase">EST. 2024</p>
      
      <div class="mt-10 flex flex-wrap justify-center items-center gap-4 sm:gap-8 text-white/30 text-[10px] sm:text-xs tracking-widest uppercase relative z-20">
-      <span>Premium</span><span class="w-1 h-1 rounded-full bg-neon/50"></span> <span>Limitado</span><span class="w-1 h-1 rounded-full bg-neon/50"></span> <span>Exclusivo</span>
+      <span>Premium</span><span class="w-1 h-1 rounded-full bg-neon transition-uv"></span> <span>Limitado</span><span class="w-1 h-1 rounded-full bg-neon transition-uv"></span> <span>Exclusivo</span>
      </div>
     </div>
     <div class="absolute bottom-0 left-0 w-full h-24 sm:h-32 bg-gradient-to-t from-dark-800 to-transparent"></div>
    </section>
 
-   <div class="relative w-full overflow-hidden bg-neon z-20 shadow-[0_5px_30px_rgba(255,30,30,0.2)] transform -rotate-2 scale-105 -mt-6 sm:-mt-10 mb-12 sm:mb-20">
+   <div class="relative w-full overflow-hidden bg-neon z-20 shadow-[0_5px_30px_var(--neon-glow-medium)] transform -rotate-2 scale-105 -mt-6 sm:-mt-10 mb-12 sm:mb-20 transition-uv">
     <div class="animate-marquee py-2 sm:py-3 flex text-dark-900 font-display text-xl sm:text-2xl tracking-[0.2em] uppercase">
       <span class="mx-4 sm:mx-6">Edición Limitada • Premium Streetwear • Diseño Exclusivo •</span>
       <span class="mx-4 sm:mx-6">Edición Limitada • Premium Streetwear • Diseño Exclusivo •</span>
@@ -194,87 +221,174 @@ tailwind.config = {
     </div>
    </div>
 
-   <section id="collections" class="relative w-full bg-dark-800 pb-20 pt-6 px-4 sm:px-6">
+   <section id="collections" class="relative w-full bg-dark-800 pb-20 pt-6 px-4 sm:px-6 relative z-10">
     <div class="max-w-7xl mx-auto">
      <div class="fade-up text-center mb-12 sm:mb-16">
-      <p class="text-neon text-xs tracking-[.3em] uppercase mb-3 font-medium">Nuevas Llegadas</p>
+      <p class="text-neon text-xs tracking-[.3em] uppercase mb-3 font-medium transition-uv">Nuevas Llegadas</p>
       <h2 class="font-display text-4xl sm:text-6xl tracking-wider">Colecciones Destacadas</h2>
-      <div class="w-16 h-0.5 bg-neon/40 mx-auto mt-4"></div>
+      <div class="w-16 h-0.5 bg-neon/40 mx-auto mt-4 transition-uv"></div>
      </div>
      
      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div class="fade-up card-hover relative bg-dark-700 rounded-sm overflow-hidden group cursor-pointer">
-       <div class="card-glow absolute inset-0 opacity-0 transition-opacity duration-500" style="background:linear-gradient(135deg,rgba(255,30,30,.08),transparent)"></div>
-       <div class="relative h-56 sm:h-64 flex items-center justify-center" style="background:linear-gradient(180deg,#141414,#1a1a1a)">
-        <svg width="80" height="60" sm:width="100" sm:height="75" viewbox="0 0 220 160" fill="none"><path d="M40 80C40 50 70 25 110 25C150 25 180 50 180 80V90H40V80Z" fill="#1a1a1a" stroke="#ff1e1e" stroke-width="1" /><text x="110" y="72" text-anchor="middle" fill="#ff1e1e" font-family="Bebas Neue" font-size="16" letter-spacing="3">EXTSSY CAPS</text></svg>
-        <div class="absolute top-4 right-4 bg-neon text-white text-[10px] sm:text-xs px-2 py-1 font-semibold tracking-wide">NEW</div>
+      <!-- TARJETA 1 -->
+      <div class="glitch-reveal card-hover relative bg-dark-700 rounded-sm overflow-hidden group cursor-pointer border border-transparent transition-uv" style="animation-delay: 0s;">
+       <div class="card-glow absolute inset-0 opacity-0 transition-opacity duration-500" style="background:linear-gradient(135deg,var(--neon-glow-medium),transparent)"></div>
+       <div class="relative h-56 sm:h-64 flex items-center justify-center overflow-hidden" style="background:linear-gradient(180deg,#141414,#1a1a1a)">
+        <span class="absolute secret-ink font-display text-5xl pointer-events-none whitespace-nowrap">STRICTLY LIMITED</span>
+        <svg width="80" height="60" sm:width="100" sm:height="75" viewbox="0 0 220 160" fill="none" class="relative z-10">
+          <path d="M40 80C40 50 70 25 110 25C150 25 180 50 180 80V90H40V80Z" fill="#1a1a1a" stroke="var(--neon-color)" stroke-width="1" class="transition-uv"/>
+          <text x="110" y="72" text-anchor="middle" fill="var(--neon-color)" font-family="Bebas Neue" font-size="16" letter-spacing="3" class="transition-uv">EXTSSY CAPS</text>
+        </svg>
+        <div class="absolute top-4 right-4 bg-neon text-white text-[10px] sm:text-xs px-2 py-1 font-semibold tracking-wide transition-uv">NEW</div>
        </div>
        <div class="relative p-5">
         <h3 class="font-display text-xl sm:text-2xl tracking-wider">Shadow Black</h3>
         <p class="text-white/40 text-xs sm:text-sm mt-1 uppercase tracking-widest">Midnight Edition</p>
-        <div class="mt-4"><span class="text-neon font-semibold text-lg sm:text-xl">$89.00</span></div>
+        <div class="mt-4"><span class="text-neon font-semibold text-lg sm:text-xl transition-uv">$89.00</span></div>
        </div>
       </div>
       
-      <div class="fade-up card-hover relative bg-dark-700 rounded-sm overflow-hidden group cursor-pointer" style="transition-delay:.1s">
-       <div class="card-glow absolute inset-0 opacity-0 transition-opacity duration-500" style="background:linear-gradient(135deg,rgba(255,30,30,.08),transparent)"></div>
-       <div class="relative h-56 sm:h-64 flex items-center justify-center" style="background:linear-gradient(180deg,#141414,#1a1a1a)">
-        <svg width="80" height="60" sm:width="100" sm:height="75" viewbox="0 0 220 160" fill="none"><path d="M40 80C40 50 70 25 110 25C150 25 180 50 180 80V90H40V80Z" fill="#222" stroke="#ff1e1e" stroke-width="1" /><text x="110" y="72" text-anchor="middle" fill="#ff1e1e" font-family="Bebas Neue" font-size="16" letter-spacing="3">EXTSSY CAPS</text></svg>
+      <!-- TARJETA 2 -->
+      <div class="glitch-reveal card-hover relative bg-dark-700 rounded-sm overflow-hidden group cursor-pointer border border-transparent transition-uv" style="animation-delay: 0.15s;">
+       <div class="card-glow absolute inset-0 opacity-0 transition-opacity duration-500" style="background:linear-gradient(135deg,var(--neon-glow-medium),transparent)"></div>
+       <div class="relative h-56 sm:h-64 flex items-center justify-center overflow-hidden" style="background:linear-gradient(180deg,#141414,#1a1a1a)">
+        <span class="absolute secret-ink font-display text-6xl pointer-events-none whitespace-nowrap">NEVER SETTLE</span>
+        <svg width="80" height="60" sm:width="100" sm:height="75" viewbox="0 0 220 160" fill="none" class="relative z-10">
+          <path d="M40 80C40 50 70 25 110 25C150 25 180 50 180 80V90H40V80Z" fill="#222" stroke="var(--neon-color)" stroke-width="1" class="transition-uv" />
+          <text x="110" y="72" text-anchor="middle" fill="var(--neon-color)" font-family="Bebas Neue" font-size="16" letter-spacing="3" class="transition-uv">EXTSSY CAPS</text>
+        </svg>
         <div class="absolute top-4 right-4 bg-white/10 text-white text-[10px] sm:text-xs px-2 py-1 font-semibold tracking-wide">HOT</div>
        </div>
        <div class="relative p-5">
         <h3 class="font-display text-xl sm:text-2xl tracking-wider">Crimson Edge</h3>
         <p class="text-white/40 text-xs sm:text-sm mt-1 uppercase tracking-widest">Inferno Line</p>
-        <div class="mt-4"><span class="text-neon font-semibold text-lg sm:text-xl">$95.00</span></div>
+        <div class="mt-4"><span class="text-neon font-semibold text-lg sm:text-xl transition-uv">$95.00</span></div>
        </div>
       </div>
       
-      <div class="fade-up card-hover relative bg-dark-700 rounded-sm overflow-hidden group cursor-pointer" style="transition-delay:.2s">
-       <div class="card-glow absolute inset-0 opacity-0 transition-opacity duration-500" style="background:linear-gradient(135deg,rgba(255,30,30,.08),transparent)"></div>
-       <div class="relative h-56 sm:h-64 flex items-center justify-center" style="background:linear-gradient(180deg,#141414,#1a1a1a)">
-        <svg width="80" height="60" sm:width="100" sm:height="75" viewbox="0 0 220 160" fill="none"><path d="M40 80C40 50 70 25 110 25C150 25 180 50 180 80V90H40V80Z" fill="#151515" stroke="#ff1e1e" stroke-width="1" /><text x="110" y="72" text-anchor="middle" fill="#ff1e1e" font-family="Bebas Neue" font-size="16" letter-spacing="3">EXTSSY CAPS</text></svg>
-        <div class="absolute top-4 right-4 bg-neon/20 text-neon text-[10px] sm:text-xs px-2 py-1 font-semibold tracking-wide">LTD</div>
+      <!-- TARJETA 3 -->
+      <div class="glitch-reveal card-hover relative bg-dark-700 rounded-sm overflow-hidden group cursor-pointer border border-transparent transition-uv" style="animation-delay: 0.3s;">
+       <div class="card-glow absolute inset-0 opacity-0 transition-opacity duration-500" style="background:linear-gradient(135deg,var(--neon-glow-medium),transparent)"></div>
+       <div class="relative h-56 sm:h-64 flex items-center justify-center overflow-hidden" style="background:linear-gradient(180deg,#141414,#1a1a1a)">
+        <span class="absolute secret-ink font-display text-5xl pointer-events-none whitespace-nowrap" style="letter-spacing: 0.1em;">1 OF 100</span>
+        <svg width="80" height="60" sm:width="100" sm:height="75" viewbox="0 0 220 160" fill="none" class="relative z-10">
+          <path d="M40 80C40 50 70 25 110 25C150 25 180 50 180 80V90H40V80Z" fill="#151515" stroke="var(--neon-color)" stroke-width="1" class="transition-uv"/>
+          <text x="110" y="72" text-anchor="middle" fill="var(--neon-color)" font-family="Bebas Neue" font-size="16" letter-spacing="3" class="transition-uv">EXTSSY CAPS</text>
+        </svg>
+        <div class="absolute top-4 right-4 bg-neon/20 text-neon text-[10px] sm:text-xs px-2 py-1 font-semibold tracking-wide transition-uv">LTD</div>
        </div>
        <div class="relative p-5">
         <h3 class="font-display text-xl sm:text-2xl tracking-wider">Phantom Grey</h3>
         <p class="text-white/40 text-xs sm:text-sm mt-1 uppercase tracking-widest">Stealth Series</p>
-        <div class="mt-4"><span class="text-neon font-semibold text-lg sm:text-xl">$110.00</span></div>
+        <div class="mt-4"><span class="text-neon font-semibold text-lg sm:text-xl transition-uv">$110.00</span></div>
        </div>
       </div>
      </div>
     </div>
    </section>
 
-   <section id="about" class="relative w-full bg-dark-900 py-20 px-4 sm:px-6">
+   <!-- === NUEVA SECCIÓN DE RESEÑAS (VERIFIED COPS) === -->
+   <section id="reviews" class="relative w-full bg-dark-900 py-20 px-4 sm:px-6 relative z-10 border-t border-white/5">
+    <div class="max-w-7xl mx-auto">
+     <div class="fade-up text-center mb-12 sm:mb-16">
+      <p class="text-neon text-xs tracking-[.3em] uppercase mb-3 font-medium transition-uv">Verified Cops</p>
+      <h2 class="font-display text-4xl sm:text-6xl tracking-wider">Lo que dice la calle</h2>
+      <div class="w-16 h-0.5 bg-neon/40 mx-auto mt-4 transition-uv"></div>
+     </div>
+     
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+       <!-- Reseña 1 -->
+       <div class="fade-up card-hover bg-dark-800 p-6 sm:p-8 rounded-sm relative overflow-hidden group border border-white/5">
+         <span class="absolute secret-ink font-display text-3xl right-[-10px] bottom-2 pointer-events-none opacity-0">AUTHENTIC</span>
+         <div class="flex items-center gap-4 mb-4 relative z-10">
+           <div class="w-12 h-12 bg-dark-700 rounded-full flex items-center justify-center text-neon font-display text-xl border border-white/10 transition-uv">M</div>
+           <div>
+             <h4 class="font-body font-semibold text-base tracking-wide">@miguel_rmz</h4>
+             <div class="flex text-neon gap-1 mt-1 transition-uv">
+               <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+               <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+               <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+               <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+               <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+             </div>
+           </div>
+         </div>
+         <p class="text-white/60 text-sm leading-relaxed relative z-10 font-light">"La calidad del bordado 3D está a otro nivel. Superó mis expectativas por completo. Me la entregaron rapidísimo, esperando ya el próximo drop."</p>
+       </div>
+
+       <!-- Reseña 2 -->
+       <div class="fade-up card-hover bg-dark-800 p-6 sm:p-8 rounded-sm relative overflow-hidden group border border-white/5" style="transition-delay: 0.1s;">
+         <span class="absolute secret-ink font-display text-3xl right-[-10px] bottom-2 pointer-events-none opacity-0">STREET TESTED</span>
+         <div class="flex items-center gap-4 mb-4 relative z-10">
+           <div class="w-12 h-12 bg-dark-700 rounded-full flex items-center justify-center text-neon font-display text-xl border border-white/10 transition-uv">D</div>
+           <div>
+             <h4 class="font-body font-semibold text-base tracking-wide">@dani_street</h4>
+             <div class="flex text-neon gap-1 mt-1 transition-uv">
+               <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+               <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+               <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+               <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+               <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+             </div>
+           </div>
+         </div>
+         <p class="text-white/60 text-sm leading-relaxed relative z-10 font-light">"El fit de la gorra es perfecto. Se nota que no usan blanks baratos, el gramaje de la tela se siente súper premium."</p>
+       </div>
+
+       <!-- Reseña 3 -->
+       <div class="fade-up card-hover bg-dark-800 p-6 sm:p-8 rounded-sm relative overflow-hidden group border border-white/5" style="transition-delay: 0.2s;">
+         <span class="absolute secret-ink font-display text-3xl right-[-10px] bottom-2 pointer-events-none opacity-0">TOP TIER</span>
+         <div class="flex items-center gap-4 mb-4 relative z-10">
+           <div class="w-12 h-12 bg-dark-700 rounded-full flex items-center justify-center text-neon font-display text-xl border border-white/10 transition-uv">C</div>
+           <div>
+             <h4 class="font-body font-semibold text-base tracking-wide">@carlos_v</h4>
+             <div class="flex text-neon gap-1 mt-1 transition-uv">
+               <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+               <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+               <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+               <i data-lucide="star" class="w-3 h-3 fill-current"></i>
+               <i data-lucide="star" class="w-3 h-3"></i> <!-- 4 Estrellas llenas, 1 vacía -->
+             </div>
+           </div>
+         </div>
+         <p class="text-white/60 text-sm leading-relaxed relative z-10 font-light">"El diseño Crimson Edge es una joya. La compré la semana pasada y la textura es brutal. Ojalá saquen más colores pronto."</p>
+       </div>
+
+     </div>
+    </div>
+   </section>
+   <!-- =================================================== -->
+
+   <section id="about" class="relative w-full bg-dark-900 py-20 px-4 sm:px-6 relative z-10 border-t border-white/5">
     <div class="max-w-4xl mx-auto text-center fade-up">
-     <p class="text-neon text-xs tracking-[.3em] uppercase mb-3 font-medium">Concepto</p>
+     <p class="text-neon text-xs tracking-[.3em] uppercase mb-3 font-medium transition-uv">Concepto</p>
      <h2 class="font-display text-4xl sm:text-5xl tracking-wider mb-6">Nosotros</h2>
      <p class="text-white/40 leading-relaxed text-base sm:text-lg max-w-2xl mx-auto">EXTSSY CAPS redefine el accesorio urbano. No solo diseñamos gorras, creamos piezas de identidad para quienes valoran la exclusividad y la calidad premium.</p>
     </div>
    </section>
 
-   <section id="location" class="relative w-full bg-dark-800 py-20 px-4 sm:px-6">
+   <section id="location" class="relative w-full bg-dark-800 py-20 px-4 sm:px-6 relative z-10">
     <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center">
       <div class="fade-up order-2 lg:order-1 text-center lg:text-left">
-       <p class="text-neon text-xs tracking-[.3em] uppercase mb-3 font-medium">Ubicación Física</p>
+       <p class="text-neon text-xs tracking-[.3em] uppercase mb-3 font-medium transition-uv">Ubicación Física</p>
        <h2 class="font-display text-4xl sm:text-5xl tracking-wider mb-6">Visita la Base</h2>
        <p class="text-white/40 leading-relaxed text-base sm:text-lg mb-8 max-w-md mx-auto lg:mx-0">Pruébate nuestros modelos y conoce la calidad premium de nuestros materiales en nuestra ubicación física en Comitán.</p>
        <div class="space-y-4 sm:space-y-6 inline-block text-left">
         <div class="flex items-center gap-4">
-         <i data-lucide="map-pin" class="text-neon flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6"></i>
+         <i data-lucide="map-pin" class="text-neon flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 transition-uv"></i>
          <p class="text-white/60 text-sm sm:text-base">Sexta Avenida Pte. Surs, Comitan.</p>
         </div>
         <div class="flex items-center gap-4">
-         <i data-lucide="clock" class="text-neon flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6"></i>
+         <i data-lucide="clock" class="text-neon flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 transition-uv"></i>
          <p class="text-white/60 text-sm sm:text-base">Lun - Vier: 10:00 AM - 7:30 PM</p>
         </div>
         <div class="flex items-center gap-4">
-          <i data-lucide="clock" class="text-neon flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6"></i>
+          <i data-lucide="clock" class="text-neon flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 transition-uv"></i>
           <p class="text-white/60 text-sm sm:text-base">Sáb: 10:00 AM - 7:00 PM</p>
          </div>
        </div>
        <div class="w-full flex justify-center lg:justify-start">
-         <a href="https://maps.app.goo.gl/HQE5z5UfmJgL5FXo8" target="_blank" rel="noopener noreferrer" class="mt-8 sm:mt-10 btn-neon w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-transparent border border-neon text-neon uppercase text-xs font-bold tracking-widest rounded-sm hover:text-white transition-colors relative z-20"> 
+         <a href="https://maps.app.goo.gl/HQE5z5UfmJgL5FXo8" target="_blank" rel="noopener noreferrer" class="mt-8 sm:mt-10 btn-neon w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-transparent border border-neon text-neon uppercase text-xs font-bold tracking-widest rounded-sm hover:text-white transition-colors relative z-20 transition-uv"> 
           <span>Ver en Mapa</span> <i data-lucide="external-link" style="width:16px;height:16px"></i> 
          </a>
        </div>
@@ -282,15 +396,15 @@ tailwind.config = {
 
       <div class="fade-up order-1 lg:order-2 relative rounded overflow-hidden border border-white/10 shadow-2xl aspect-[4/5] w-full max-w-lg mx-auto lg:mx-0 lg:ml-auto">
        <img src="cap.jpeg" alt="Tienda EXTSSY CAPS" class="w-full h-full object-cover object-top grayscale hover:grayscale-0 transition-all duration-700 relative z-20">
-       <div class="absolute inset-0 bg-gradient-to-t from-dark-900 via-transparent to-transparent opacity-60"></div>
+       <div class="absolute inset-0 bg-gradient-to-t from-dark-900 via-transparent to-transparent opacity-60 pointer-events-none"></div>
       </div>
     </div>
    </section>
 
-   <footer id="footer" class="relative w-full bg-dark-900 py-10 sm:py-12 px-4 sm:px-6 border-t border-white/5 z-20">
+   <footer id="footer" class="relative w-full bg-dark-900 py-10 sm:py-12 px-4 sm:px-6 border-t border-white/5 z-20 relative z-10">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
       <div>
-       <p class="font-display text-2xl tracking-wider text-neon">EXTSSY CAPS</p>
+       <p class="font-display text-2xl tracking-wider text-neon transition-uv">EXTSSY CAPS</p>
        <p class="text-white/30 text-[10px] sm:text-xs mt-1">© 2024 EXTSSY CAPS. Todos los derechos reservados.</p>
       </div>
       <div class="flex gap-4">
@@ -302,19 +416,31 @@ tailwind.config = {
   </div>
   
   <script>
+// LÓGICA DEL MODO UV (BLACKLIGHT)
+const uvToggleBtn = document.getElementById('uv-toggle-btn');
+const bodyEl = document.getElementById('body-container');
+const uvIcon = document.getElementById('uv-icon');
+
+uvToggleBtn.addEventListener('click', () => {
+  bodyEl.classList.toggle('uv-mode');
+  if(bodyEl.classList.contains('uv-mode')) {
+    uvToggleBtn.classList.add('border-neon', 'shadow-[0_0_20px_var(--neon-glow-strong)]');
+    uvIcon.classList.remove('text-white/50');
+    uvIcon.classList.add('text-neon');
+  } else {
+    uvToggleBtn.classList.remove('border-neon', 'shadow-[0_0_20px_var(--neon-glow-strong)]');
+    uvIcon.classList.remove('text-neon');
+    uvIcon.classList.add('text-white/50');
+  }
+});
+
 // LÓGICA DEL PRELOADER
 window.addEventListener('load', () => {
-  // Esperar 1.8 segundos antes de ocultar la carga
   setTimeout(() => {
     const preloader = document.getElementById('preloader');
-    const body = document.getElementById('body-container');
-    
-    // Ocultamos el preloader
     preloader.classList.add('hidden-preloader');
-    
-    // Devolvemos el scroll normal a la página (quitar overflow-hidden temporal)
-    body.classList.remove('overflow-hidden');
-    body.classList.add('overflow-x-hidden');
+    bodyEl.classList.remove('overflow-hidden');
+    bodyEl.classList.add('overflow-x-hidden');
   }, 1800);
 });
 
@@ -323,8 +449,6 @@ document.getElementById('mobile-toggle').addEventListener('click', () => {
   const menu = document.getElementById('mobile-menu');
   menu.classList.toggle('hidden');
 });
-
-// Cerrar el menú móvil al hacer clic en un enlace
 document.querySelectorAll('#mobile-menu a').forEach(link => {
   link.addEventListener('click', () => {
     document.getElementById('mobile-menu').classList.add('hidden');
@@ -333,9 +457,14 @@ document.querySelectorAll('#mobile-menu a').forEach(link => {
 
 // Animación con Intersection Observer
 const observer = new IntersectionObserver((entries) => {
-  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  entries.forEach(e => { 
+    if(e.isIntersecting) {
+      e.target.classList.add('visible'); 
+    }
+  });
 }, { threshold: 0.1 });
-document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+document.querySelectorAll('.fade-up, .glitch-reveal').forEach(el => observer.observe(el));
 
 // Efecto de scroll del Navbar
 window.addEventListener('scroll', () => {
