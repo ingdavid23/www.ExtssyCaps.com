@@ -11,6 +11,42 @@
 html, body { margin: 0; padding: 0; }
 * { box-sizing: border-box; }
 
+/* --- PANTALLA DE CARGA (PRELOADER) --- */
+#preloader {
+  position: fixed;
+  inset: 0;
+  background-color: #0a0a0a;
+  z-index: 999999; /* Por encima de todo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
+}
+
+#preloader.hidden-preloader {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.flicker-text {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(4rem, 15vw, 8rem);
+  color: #ff1e1e;
+  letter-spacing: 0.1em;
+  animation: neon-flicker 2s infinite alternate;
+}
+
+@keyframes neon-flicker {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% {
+    opacity: 1;
+    text-shadow: 0 0 10px rgba(255,30,30,0.8), 0 0 30px rgba(255,30,30,0.6), 0 0 60px rgba(255,30,30,0.4);
+  }
+  20%, 24%, 55% {
+    opacity: 0.3;
+    text-shadow: none;
+  }
+}
+
 /* --- TEXTURA DE RUIDO (FILM GRAIN) --- */
 .noise-bg {
   position: fixed;
@@ -84,8 +120,14 @@ tailwind.config = {
 }
 </script>
  </head>
- <body class="bg-dark-900 text-white font-body overflow-x-hidden">
+ <!-- Añadido un overflow-hidden temporal para que no puedan scrollear durante la pantalla de carga -->
+ <body class="bg-dark-900 text-white font-body overflow-hidden" id="body-container">
   
+  <!-- PANTALLA DE CARGA -->
+  <div id="preloader">
+    <div class="flicker-text">EXTSSY CAPS</div>
+  </div>
+
   <div class="noise-bg"></div>
 
   <div id="app" class="w-full overflow-hidden">
@@ -164,7 +206,7 @@ tailwind.config = {
       <div class="fade-up card-hover relative bg-dark-700 rounded-sm overflow-hidden group cursor-pointer">
        <div class="card-glow absolute inset-0 opacity-0 transition-opacity duration-500" style="background:linear-gradient(135deg,rgba(255,30,30,.08),transparent)"></div>
        <div class="relative h-56 sm:h-64 flex items-center justify-center" style="background:linear-gradient(180deg,#141414,#1a1a1a)">
-        <svg width="80" height="60" sm:width="100" sm:height="75" viewbox="0 0 220 160" fill="none"><path d="M40 80C40 50 70 25 110 25C150 25 180 50 180 80V90H40V80Z" fill="#1a1a1a" stroke="#ff1e1e" stroke-width="1" /><text x="110" y="72" text-anchor="middle" fill="#ff1e1e" font-family="Bebas Neue" font-size="16" letter-spacing="3">EXTSSY</text></svg>
+        <svg width="80" height="60" sm:width="100" sm:height="75" viewbox="0 0 220 160" fill="none"><path d="M40 80C40 50 70 25 110 25C150 25 180 50 180 80V90H40V80Z" fill="#1a1a1a" stroke="#ff1e1e" stroke-width="1" /><text x="110" y="72" text-anchor="middle" fill="#ff1e1e" font-family="Bebas Neue" font-size="16" letter-spacing="3">EXTSSY CAPS</text></svg>
         <div class="absolute top-4 right-4 bg-neon text-white text-[10px] sm:text-xs px-2 py-1 font-semibold tracking-wide">NEW</div>
        </div>
        <div class="relative p-5">
@@ -177,7 +219,7 @@ tailwind.config = {
       <div class="fade-up card-hover relative bg-dark-700 rounded-sm overflow-hidden group cursor-pointer" style="transition-delay:.1s">
        <div class="card-glow absolute inset-0 opacity-0 transition-opacity duration-500" style="background:linear-gradient(135deg,rgba(255,30,30,.08),transparent)"></div>
        <div class="relative h-56 sm:h-64 flex items-center justify-center" style="background:linear-gradient(180deg,#141414,#1a1a1a)">
-        <svg width="80" height="60" sm:width="100" sm:height="75" viewbox="0 0 220 160" fill="none"><path d="M40 80C40 50 70 25 110 25C150 25 180 50 180 80V90H40V80Z" fill="#222" stroke="#ff1e1e" stroke-width="1" /><text x="110" y="72" text-anchor="middle" fill="#ff1e1e" font-family="Bebas Neue" font-size="16" letter-spacing="3">EXTSSY</text></svg>
+        <svg width="80" height="60" sm:width="100" sm:height="75" viewbox="0 0 220 160" fill="none"><path d="M40 80C40 50 70 25 110 25C150 25 180 50 180 80V90H40V80Z" fill="#222" stroke="#ff1e1e" stroke-width="1" /><text x="110" y="72" text-anchor="middle" fill="#ff1e1e" font-family="Bebas Neue" font-size="16" letter-spacing="3">EXTSSY CAPS</text></svg>
         <div class="absolute top-4 right-4 bg-white/10 text-white text-[10px] sm:text-xs px-2 py-1 font-semibold tracking-wide">HOT</div>
        </div>
        <div class="relative p-5">
@@ -190,7 +232,7 @@ tailwind.config = {
       <div class="fade-up card-hover relative bg-dark-700 rounded-sm overflow-hidden group cursor-pointer" style="transition-delay:.2s">
        <div class="card-glow absolute inset-0 opacity-0 transition-opacity duration-500" style="background:linear-gradient(135deg,rgba(255,30,30,.08),transparent)"></div>
        <div class="relative h-56 sm:h-64 flex items-center justify-center" style="background:linear-gradient(180deg,#141414,#1a1a1a)">
-        <svg width="80" height="60" sm:width="100" sm:height="75" viewbox="0 0 220 160" fill="none"><path d="M40 80C40 50 70 25 110 25C150 25 180 50 180 80V90H40V80Z" fill="#151515" stroke="#ff1e1e" stroke-width="1" /><text x="110" y="72" text-anchor="middle" fill="#ff1e1e" font-family="Bebas Neue" font-size="16" letter-spacing="3">EXTSSY</text></svg>
+        <svg width="80" height="60" sm:width="100" sm:height="75" viewbox="0 0 220 160" fill="none"><path d="M40 80C40 50 70 25 110 25C150 25 180 50 180 80V90H40V80Z" fill="#151515" stroke="#ff1e1e" stroke-width="1" /><text x="110" y="72" text-anchor="middle" fill="#ff1e1e" font-family="Bebas Neue" font-size="16" letter-spacing="3">EXTSSY CAPS</text></svg>
         <div class="absolute top-4 right-4 bg-neon/20 text-neon text-[10px] sm:text-xs px-2 py-1 font-semibold tracking-wide">LTD</div>
        </div>
        <div class="relative p-5">
@@ -252,7 +294,6 @@ tailwind.config = {
        <p class="text-white/30 text-[10px] sm:text-xs mt-1">© 2024 EXTSSY CAPS. Todos los derechos reservados.</p>
       </div>
       <div class="flex gap-4">
-       <!-- EL CAMBIO DE INSTAGRAM ESTÁ AQUÍ -->
        <a href="https://www.instagram.com/extssy_caps?igsh=d3lvcXFlenF5cWVn" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full border border-white/5 flex items-center justify-center text-white/40 hover:text-neon active:scale-95 transition-all"><i data-lucide="instagram" style="width:18px;height:18px"></i></a>
        <a href="#" class="w-10 h-10 rounded-full border border-white/5 flex items-center justify-center text-white/40 hover:text-neon active:scale-95 transition-all"><i data-lucide="facebook" style="width:18px;height:18px"></i></a>
       </div>
@@ -261,6 +302,22 @@ tailwind.config = {
   </div>
   
   <script>
+// LÓGICA DEL PRELOADER
+window.addEventListener('load', () => {
+  // Esperar 1.8 segundos antes de ocultar la carga
+  setTimeout(() => {
+    const preloader = document.getElementById('preloader');
+    const body = document.getElementById('body-container');
+    
+    // Ocultamos el preloader
+    preloader.classList.add('hidden-preloader');
+    
+    // Devolvemos el scroll normal a la página (quitar overflow-hidden temporal)
+    body.classList.remove('overflow-hidden');
+    body.classList.add('overflow-x-hidden');
+  }, 1800);
+});
+
 // Toggle del menú móvil
 document.getElementById('mobile-toggle').addEventListener('click', () => {
   const menu = document.getElementById('mobile-menu');
